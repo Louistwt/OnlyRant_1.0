@@ -11,7 +11,7 @@ export async function getUserProfileAction() {
 
 	if (!user) return null;
 
-	const currentUser = await prisma.user.findUnique({ where: { id: user.id } });
+	const currentUser = await prisma.user.findUnique({ where: { kindeId: user.id } });
 	return currentUser;
 }
 
@@ -27,7 +27,7 @@ export async function updateUserProfileAction({ name, image }: { name: string; i
 	if (image) updatedFields.image = image;
 
 	const updatedUser = await prisma.user.update({
-		where: { id: user.id },
+		where: { kindeId: user.id },
 		data: updatedFields,
 	});
 
