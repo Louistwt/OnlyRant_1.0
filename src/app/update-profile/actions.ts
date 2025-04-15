@@ -7,21 +7,19 @@ import { revalidatePath } from "next/cache";
 
 export async function getUserProfileAction() {
 	const { getUser, isAuthenticated } = getKindeServerSession();
-	const isLoggedIn = await isAuthenticated();
 	const user = await getUser();
 
-	if (!isLoggedIn) return null;
+	if (!user) return null;
 
-	const currentUser = await prisma.user.findUnique({ where: { kindeId: user?.id } });
+	const currentUser = await prisma.user.findUnique({ where: { kindeId: user.id } });
 	return currentUser;
 }
 
 export async function updateUserProfileAction({ name, image }: { name: string; image: string }) {
-	const { getUser, isAuthenticated } = getKindeServerSession();
-	const isLoggedIn = await isAuthenticated();
+	const { getUser } = getKindeServerSession();
 	const user = await getUser();
 
-	if (!isLoggedIn) throw new Error("Unauthorized");
+	if (!user) throw new Error("Unauthorized");
 
 	const updatedFields: Partial<User> = {};
 
@@ -29,7 +27,7 @@ export async function updateUserProfileAction({ name, image }: { name: string; i
 	if (image) updatedFields.image = image;
 
 	const updatedUser = await prisma.user.update({
-		where: { kindeId: user?.id },
+		where: { kindeId: user.id },
 		data: updatedFields,
 	});
 
